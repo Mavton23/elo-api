@@ -1,0 +1,45 @@
+# Ambiente local completo: PostgreSQL + API
+#   docker compose up -d db          # só a base de dados (para pnpm start:dev)
+#   docker compose up --build        # tudo
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: elo
+      POSTGRES_PASSWORD: elo
+      POSTGRES_DB: elo
+    ports:
+      - "5432:5432"
+    volumes:
+      - elo-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U elo"]
+      interval: 5s
+      retries: 10
+
+  migrate:
+    build: .
+    command: ["npx", "prisma", "migrate", "deploy"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://elo:elo@db:5432/elo?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://elo:elo@db:5432/elo?schema=public
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  elo-db:

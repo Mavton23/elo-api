@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "SecurityLevel" ADD VALUE 'ADMINISTRATIVO';

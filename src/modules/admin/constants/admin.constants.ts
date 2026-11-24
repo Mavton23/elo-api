@@ -1,0 +1,40 @@
+export const ADMIN_LEVELS = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  MODERATOR: 'MODERATOR',
+} as const;
+
+export const ADMIN_MODULES = {
+  USERS: 'USERS',
+  HIERARCHY: 'HIERARCHY',
+  MEMBERS: 'MEMBERS',
+  NOTIFICATIONS: 'NOTIFICATIONS',
+  SYSTEM: 'SYSTEM',
+  LOGS: 'LOGS',
+  SETTINGS: 'SETTINGS',
+} as const;
+
+export const ADMIN_ACTIONS = {
+  VIEW: 'VIEW',
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+  DELETE: 'DELETE',
+  APPROVE: 'APPROVE',
+  EXPORT: 'EXPORT',
+} as const;
+
+export const ACTIVITY_LEVELS = {
+  INFO: 'INFO',
+  WARNING: 'WARNING',
+  ERROR: 'ERROR',
+  SECURITY: 'SECURITY',
+} as const;
+
+export const ACTIVITY_MODULES = {
+  AUTH: 'AUTH',
+  USERS: 'USERS',
+  HIERARCHY: 'HIERARCHY',
+  NOTIFICATIONS: 'NOTIFICATIONS',
+  SYSTEM: 'SYSTEM',
+  ADMIN: 'ADMIN',
+} as const;

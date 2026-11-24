@@ -1,0 +1,1179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Enums para o Ministério do Interior
+enum MemberRank {
+  GUARDA
+  SEGUNDO_CABO
+  PRIMEIRO_CABO
+  SARGENTO
+  SARGENTO_PRINCIPAL
+  SUBINSPECTOR
+  INSPECTOR
+  INSPECTOR_PRINCIPAL
+  ADJUNTO_SUPERINTENDENTE
+  SUPERINTENDENTE
+  SUPERINTENDENTE_PRINCIPAL
+  PRIMEIRO_ADJUNTO_COMISSARIO
+  COMISSARIO
+  INSPECTOR_GERAL
+}
+
+enum Department {
+  POLICIA_PROTECAO
+  POLICIA_TRANSITO
+  POLICIA_FRONTEIRAS
+  POLICIA_COSTEIRA_LACUSTRE_FLUVIAL
+  UNIDADE_CANINA
+  UNIDADE_INTERVENCAO_RAPIDA
+  UNIDADE_PROTECAO_ALTAS_INDIVIDUALIDADES
+  GRUPO_OPERACOES_ESPECIAIS
+}
+
+enum UnitType {
+  DIRECCAO_NACIONAL
+  COMANDO_PROVINCIAL
+  COMANDO_DISTRITAL
+  ESQUADRA
+  QUARTEL
+  SUBUNIDADE
+  DEPARTAMENTO
+  SECCAO
+  COMPANHIA
+}
+
+enum HierarchyNodeStatus {
+  ACTIVE
+  INACTIVE
+  PLANNED
+  UNDER_CONSTRUCTION
+  DECOMMISSIONED
+}
+
+enum SecurityLevel {
+  BASICO
+  INTERMEDIO
+  ALTO
+  MAXIMO
+  ADMINISTRATIVO
+}
+
+enum MaritalStatus {
+  SOLTEIRO
+  CASADO
+  DIVORCIADO
+  VIUVO
+}
+
+// Enums para o módulo Admin
+enum AdminStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AdminLevel {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+enum AdminModule {
+  USERS
+  HIERARCHY
+  MEMBERS
+  NOTIFICATIONS
+  SYSTEM
+  LOGS
+  SETTINGS
+}
+
+enum AdminAction {
+  VIEW
+  CREATE
+  EDIT
+  DELETE
+  APPROVE
+  EXPORT
+}
+
+enum ActivityLevel {
+  INFO
+  WARNING
+  ERROR
+  SECURITY
+}
+
+enum ActivityModule {
+  AUTH
+  USERS
+  HIERARCHY
+  NOTIFICATIONS
+  SYSTEM
+  ADMIN
+}
+
+enum TargetType {
+  USER
+  NODE
+  MEMBER
+  NOTIFICATION
+  SYSTEM
+  POST
+  COMMENT
+}
+
+enum SettingsCategory {
+  GENERAL
+  SECURITY
+  NOTIFICATIONS
+  BACKUP
+  MAINTENANCE
+}
+
+enum SettingsType {
+  BOOLEAN
+  NUMBER
+  STRING
+  SELECT
+  JSON
+}
+
+// Enums para o módulo de configurações
+enum UserSettingCategory {
+  NOTIFICATIONS
+  PRIVACY
+  SECURITY
+  APPEARANCE
+  ACCOUNT
+  PREFERENCES
+  SYSTEM
+}
+
+enum UserSettingType {
+  BOOLEAN
+  NUMBER
+  STRING
+  SELECT
+  JSON
+  ARRAY
+}
+
+// Módulo de Ajuda (Help)
+enum HelpCategory {
+  GERAL
+  AUTENTICACAO
+  PERFIL
+  HIERARQUIA
+  MEMBROS
+  NOTIFICACOES
+  CONFIGURACOES
+  SOCIAL
+  ADMINISTRACAO
+  SEGURANCA
+}
+
+enum HelpType {
+  MANUAL
+  TUTORIAL
+  FAQ
+  VIDEO
+  GUIA_RAPIDO
+  ARTIGO
+}
+
+enum HelpStatus {
+  RASCUNHO
+  PUBLICADO
+  ARQUIVADO
+  EM_REVISAO
+}
+
+enum HelpAudience {
+  TODOS_USUARIOS
+  MEMBROS
+  COMANDANTES
+  ADMINISTRADORES
+  NOVOS_USUARIOS
+}
+
+enum AboutModuleStatus {
+  ACTIVE
+  MAINTENANCE
+  DEPRECATED
+}
+
+enum AboutModuleCategory {
+  CORE
+  ADMIN
+  SOCIAL
+  HIERARCHY
+  HELP
+  SYSTEM
+}
+
+enum TrainingCourse {
+  // Cursos principais (você pode adicionar mais conforme necessário)
+  I             // I Curso
+  II            // II Curso
+  III           // III Curso
+  IV            // IV Curso
+  V             // V Curso
+  VI            // VI Curso
+  VII           // VII Curso
+  VIII          // VIII Curso
+  IX            // IX Curso
+  X             // X Curso
+  XI            // XI Curso
+  XII           // XII Curso
+  XIII          // XIII Curso
+  XIV           // XIV Curso
+  XV            // XV Curso
+  XVI           // XVI Curso
+  XVII          // XVII Curso
+  XVIII         // XVIII Curso
+  XIX           // XIX Curso
+  XX            // XX Curso
+  XXI           // XXI Curso
+  XXII          // XXII Curso
+  XXIII         // XXIII Curso
+  XXIV          // XXIV Curso
+  XXV           // XXV Curso
+  XXVI          // XXVI Curso
+  XXVII         // XXVII Curso
+  XXVIII        // XXVIII Curso
+  XXIX          // XXIX Curso
+  XXX           // XXX Curso
+  XXXI          // XXXI Curso
+  XXXII         // XXXII Curso
+  XXXIII        // XXXIII Curso
+  XXXIV         // XXXIV Curso
+  XXXV          // XXXV Curso
+  XXXVI         // XXXVI Curso
+  XXXVII        // XXXVII Curso
+  XXXVIII       // XXXVIII Curso
+  XXXIX         // XXXIX Curso
+  XL            // XL Curso (40)
+  XLI           // XLI Curso (41)
+  XLII          // XLII Curso (42) - SEU CURSO!
+  XLIII         // XLIII Curso (43)
+  XLIV          // XLIV Curso (44)
+  XLV           // XLV Curso (45)
+  XLVI          // XLVI Curso (46)
+  XLVII         // XLVII Curso (47)
+  XLVIII        // XLVIII Curso (48)
+  XLIX          // XLIX Curso (49)
+  L             // L Curso (50)
+}
+
+// Pre-Registo de um Membro (Ainda nao usuario final)
+model Member {
+  id               String    @id @default(uuid())
+  nip              String    @unique
+  biNumber         String    @unique
+  nuit             String    @unique
+  fullName         String
+  dateOfBirth      DateTime
+  placeOfBirth     String
+  nationality      String    @default("Moçambicana")
+  maritalStatus    MaritalStatus
+  memberRank       MemberRank
+  currentPosition  String
+  department       Department
+  unit             String
+  unitType         UnitType
+  province         String
+
+  trainingCourse   TrainingCourse?
+  trainingSchool   String?        @db.VarChar(100)
+  graduationYear   Int? 
+
+  entryDate        DateTime
+  institutionalEmail String? @unique
+  officialPhone    String?
+  isVerified       Boolean   @default(false)
+  verifiedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@map("members")
+}
+
+// Modelo principal de Usuário
+model User {
+  id                  String         @id @default(uuid())
+  
+  // Identificação pessoal
+  nip                 String         @unique @db.VarChar(20)
+  biNumber            String         @unique @db.VarChar(13)
+  nuit                String         @unique @db.VarChar(9)
+  
+  // Dados pessoais
+  fullName            String         @db.VarChar(200)
+  dateOfBirth         DateTime
+  placeOfBirth        String         @db.VarChar(100)
+  nationality         String         @default("Moçambicana") @db.VarChar(50)
+  maritalStatus       MaritalStatus
+  
+  // Dados profissionais
+  memberRank          MemberRank
+  currentPosition     String         @db.VarChar(100)
+  department          Department
+  unit                String         @db.VarChar(100)
+  unitType            UnitType
+  province            String         @db.VarChar(50)
+
+  // FORMAÇÃO
+  trainingCourse      TrainingCourse?
+  trainingSchool      String?        @db.VarChar(100)
+  graduationYear      Int?
+  trainingSpecialty   String?        @db.VarChar(100)
+  additionalCourses   String[]
+
+  entryDate           DateTime
+  
+  // Contactos
+  institutionalEmail  String?        @unique @db.VarChar(100)
+  officialPhone       String?        @db.VarChar(20)
+  personalPhone       String?        @db.VarChar(20)
+  residentialAddress  String?        @db.VarChar(300)
+  emergencyContactName  String?      @db.VarChar(200)
+  emergencyContactPhone String?      @db.VarChar(20)
+  
+  // Autenticação
+  passwordHash        String
+  refreshToken        String?
+  // Incrementado em logout/alteração de senha/desativação: invalida
+  // imediatamente todos os access tokens emitidos anteriormente.
+  tokenVersion        Int            @default(0)
+  passwordChangedAt   DateTime?
+  mustChangePassword  Boolean        @default(false)
+
+  // 2FA
+  isTwoFactorEnabled Boolean @default(false)
+  twoFactorSecret    String? @unique
+  otpCode            String?
+  otpExpiresAt       DateTime?
+  /// Desafio 2FA em curso (uso único: impede reutilizar um desafio antigo)
+  mfaChallengeId     String?  @db.VarChar(64)
+  trustedDevices     TrustedDevice[]
+  recoveryCodes      RecoveryCode[]
+  
+  // Segurança
+  securityLevel       SecurityLevel  @default(BASICO)
+  lastAccess          DateTime?
+  isActive            Boolean        @default(true)
+  loginAttempts       Int            @default(0)
+  lockedUntil         DateTime?
+  
+  // Relacionamentos
+  posts               Post[]                @relation("UserPosts")
+  comments            Comment[]             @relation("UserComments")
+  likes               Like[]                @relation("UserLikes")
+  bookmarks           Bookmark[]            @relation("UserBookmarks")
+  sentNotifications   Notification[]        @relation("NotificationSender")
+  receivedNotifications NotificationRecipient[] @relation("UserReceivedNotifications")
+  
+  // Hierarquia
+  commandedNodes   HierarchyNode[] @relation("HierarchyCommander")
+  memberships            HierarchyMembership[]
+  createdNodes     HierarchyNode[] @relation("HierarchyCreatedBy")
+  updatedNodes     HierarchyNode[] @relation("HierarchyUpdatedBy")
+
+  // Settings
+  userSettings                UserSetting[]
+
+  // Admin
+  adminProfile                AdminProfile?
+
+  // Serviços ao efetivo
+  lifeProofs                  LifeProof[]         @relation("LifeProofUser")
+  reviewedLifeProofs          LifeProof[]         @relation("LifeProofReviewer")
+  lifeProofCampaigns          LifeProofCampaign[]
+  dataUpdateRequests          DataUpdateRequest[] @relation("DataUpdateRequester")
+  reviewedDataUpdates         DataUpdateRequest[] @relation("DataUpdateReviewer")
+  activityLogs         ActivityLog[] @relation("ActivityLogUser")
+  systemSettings               SystemSetting[] @relation("SystemSettingUpdated")
+
+  // Ajuda (Help)
+  helpArticlesAuthored   HelpArticle[]      @relation("HelpArticleAuthor")
+  helpArticlesReviewed   HelpArticle[]      @relation("HelpReviewedBy")
+  helpUserInteractions   HelpUserInteraction[]
+  helpSearchLogs         HelpSearchLog[]
+
+  // Timestamps
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  
+  // Índices
+  @@index([department])
+  @@index([memberRank])
+  @@index([province])
+  @@index([isActive])
+}
+
+// Enums adicionais necessários
+enum PostCategory {
+  OPERACIONAL
+  ADMINISTRATIVO
+  INFORMATIVO
+  FORMACAO
+  SEGURANCA
+  PROMOCOES
+  SOCIAL
+}
+
+enum VisibilityLevel {
+  PUBLICO
+  DEPARTAMENTO
+  PATENTE_OU_MAIOR
+  UNIDADE
+  RESTRITO
+}
+
+enum NotificationCategory {
+  OPERACIONAL
+  ADMINISTRATIVO
+  SEGURANCA
+  PROMOCOES
+  FORMACAO
+  ALERTA
+  INFORMACAO
+  SOCIAL
+}
+
+enum UrgencyLevel {
+  BAIXA
+  MEDIA
+  ALTA
+  CRITICA
+}
+
+enum NotificationStatus {
+  NAO_LIDA
+  LIDA
+  ARQUIVADA
+  RESPONDIDA
+}
+
+enum NotificationAction {
+  VER_DETALHES
+  RESPONDER
+  CONFIRMAR
+  NEGAR
+  MARCAR_COMO_RESOLVIDO
+  ENCAMINHAR
+  NENHUMA
+}
+
+model Post {
+  id              String        @id @default(uuid())
+  authorId        String
+  author          User          @relation("UserPosts", fields: [authorId], references: [id], onDelete: Cascade)
+  content         String        @db.Text
+  category        PostCategory
+  visibility      VisibilityLevel
+  province        String?       @db.VarChar(50)
+  unit            String?       @db.VarChar(100)
+  tags            String[]
+  isPinned        Boolean       @default(false)
+  isArchived      Boolean       @default(false)
+  requiresApproval Boolean      @default(false)
+  approvedBy      String?
+  approvedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  media           MediaAttachment[]
+  likes           Like[]        @relation("PostLikes")
+  comments        Comment[]     @relation("PostComments")
+  bookmarks       Bookmark[]    @relation("PostBookmarks")
+  
+  @@index([authorId])
+  @@index([category])
+  @@index([visibility])
+  @@index([createdAt])
+  @@index([isPinned])
+  @@index([requiresApproval])
+}
+
+model MediaAttachment {
+  id        String   @id @default(uuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type      String   @db.VarChar(20)
+  url       String   @db.VarChar(500)
+  name      String?  @db.VarChar(200)
+  size      Int?
+  // Ficheiros privados (Cloudinary "authenticated"): a URL pública não é
+  // guardada; é gerada a cada leitura, assinada e com prazo de validade.
+  publicId     String? @db.VarChar(300)
+  resourceType String? @db.VarChar(10)
+  deliveryType String? @db.VarChar(20)
+  format       String? @db.VarChar(20)
+  mimeType     String? @db.VarChar(100)
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  post      Post     @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  isEdited  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([postId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  post      Post     @relation("PostBookmarks", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserBookmarks", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  
+  @@unique([postId, userId])
+  @@index([userId])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(200)
+  message     String   @db.Text
+  category    NotificationCategory
+  urgency     UrgencyLevel
+  senderId    String
+  sender      User     @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  requiresConfirmation Boolean @default(false)
+  confirmationDeadline DateTime?
+  availableActions   NotificationAction[]
+  status      NotificationStatus @default(NAO_LIDA)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  sentAt      DateTime @default(now())
+  recipients  NotificationRecipient[] @relation("NotificationRecipients")
+  attachments NotificationAttachment[]
+  targetDepartments Department[]
+  targetRanks      MemberRank[]
+  targetProvinces  String[]
+  
+  @@index([senderId])
+  @@index([category])
+  @@index([urgency])
+  @@index([createdAt])
+  @@index([requiresConfirmation])
+  @@index([expiresAt])
+  @@index([targetDepartments])
+  @@index([targetRanks])
+}
+
+model NotificationRecipient {
+  id             String       @id @default(uuid())
+  notificationId String
+  userId         String
+  notification   Notification @relation("NotificationRecipients", fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation("UserReceivedNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  status         NotificationStatus @default(NAO_LIDA)
+  readAt         DateTime?
+  respondedAt    DateTime?
+  response       String?      @db.VarChar(500)
+  createdAt      DateTime     @default(now())
+  
+  @@unique([notificationId, userId])
+  @@index([userId, status])
+  @@index([notificationId])
+}
+
+model NotificationAttachment {
+  id             String   @id @default(uuid())
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  type           String   @db.VarChar(20)
+  url            String   @db.VarChar(500)
+  name           String   @db.VarChar(200)
+  size           Int?
+  createdAt      DateTime @default(now())
+  
+  @@index([notificationId])
+}
+
+// Modelo para Administradores
+model AdminProfile {
+  id              String        @id @default(uuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminLevel      AdminLevel
+  adminStatus     AdminStatus @default(ACTIVE)
+  adminSince      DateTime      @default(now())
+  lastAdminActivity DateTime?
+  permissions     AdminPermission[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([adminLevel])
+  @@index([adminStatus])
+  @@index([adminSince])
+  
+  @@map("admin_profiles")
+}
+
+// Permissões de administrador
+model AdminPermission {
+  id              String       @id @default(uuid())
+  adminProfileId  String @db.VarChar(36)
+  adminProfile    AdminProfile @relation(fields: [adminProfileId], references: [id], onDelete: Cascade)
+  module          AdminModule
+  actions         AdminAction[]
+  createdAt       DateTime     @default(now())
+
+  @@unique([adminProfileId, module])
+  @@index([module])
+  
+  @@map("admin_permissions")
+}
+
+// Logs de atividade do sistema
+model ActivityLog {
+  id              String      @id @default(uuid())
+  level           ActivityLevel
+  module          ActivityModule
+  action          String      @db.VarChar(200)
+  description     String      @db.Text
+  
+  // Quem realizou a ação
+  userId          String?
+  user            User?       @relation("ActivityLogUser", fields: [userId], references: [id], onDelete: SetNull)
+  userName        String?     @db.VarChar(200)
+  userRole        String?     @db.VarChar(50)
+  
+  // O que foi afetado
+  targetType      TargetType?
+  targetId        String?
+  targetName      String?     @db.VarChar(200)
+  
+  // Detahes adicionais
+  ipAddress       String?     @db.VarChar(45)
+  userAgent       String?     @db.Text
+  metadata        Json?
+  
+  timestamp       DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+
+  @@index([level])
+  @@index([module])
+  @@index([userId])
+  @@index([targetType, targetId])
+  @@index([timestamp])
+  @@index([ipAddress])
+  
+  @@map("activity_logs")
+}
+
+// Modelo para configurações do usuário
+model UserSetting {
+  id          String              @id @default(uuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Identificação
+  key         String              @db.VarChar(100)
+  category    UserSettingCategory
+  type        UserSettingType
+  
+  // Valores
+  value       Json                // Valor atual
+  defaultValue Json               // Valor padrão
+  
+  // Metadados
+  label       String              @db.VarChar(200)
+  description String?             @db.VarChar(500)
+  options     Json?               // Para tipo SELECT/ARRAY
+  order       Int                 @default(0)
+  
+  // Controle
+  isRequired  Boolean             @default(false)
+  isEditable  Boolean             @default(true)
+  isVisible   Boolean             @default(true)
+  
+  // Validação
+  minValue    Json?
+  maxValue    Json?
+  regex       String?             @db.VarChar(200)
+  
+  // Timestamps
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  lastModifiedAt DateTime?        @updatedAt
+
+  // Relationships
+  history                     UserSettingHistory[]
+  
+  // Índices
+  @@unique([userId, key])
+  @@index([userId])
+  @@index([category])
+  @@index([key])
+  @@index([userId, category])
+  
+  @@map("user_settings")
+}
+
+// Modelo para histórico de alterações (opcional, mas útil)
+model UserSettingHistory {
+  id          String   @id @default(uuid())
+  settingId   String
+  setting     UserSetting @relation(fields: [settingId], references: [id], onDelete: Cascade)
+  
+  oldValue    Json?
+  newValue    Json
+  changedBy   String?   // Pode ser userId ou 'system'
+  reason      String?   @db.VarChar(500)
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([settingId])
+  @@index([createdAt])
+  
+  @@map("user_setting_history")
+}
+
+// Configurações do sistema
+model SystemSetting {
+  id              String          @id @default(uuid())
+  name            String          @unique @db.VarChar(100)
+  description     String          @db.VarChar(500)
+  category        SettingsCategory
+  type            SettingsType
+  value           Json
+  defaultValue    Json
+  options         Json?           // Para tipo SELECT
+  required        Boolean         @default(false)
+  editable        Boolean         @default(true)
+  order           Int             @default(0)
+  updatedAt       DateTime        @updatedAt
+  updatedById     String?
+  updatedBy       User?           @relation("SystemSettingUpdated", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt       DateTime        @default(now())
+
+  @@index([category])
+  @@index([type])
+  @@index([order])
+  
+  @@map("system_settings")
+}
+
+// Hierarquia organizacional
+model HierarchyNode {
+  id              String        @id @default(uuid())
+  type            UnitType
+  name            String        @db.VarChar(200)
+  code            String        @unique @db.VarChar(50)
+  description     String?       @db.VarChar(500)
+  parentId        String?
+  status            HierarchyNodeStatus @default(ACTIVE)
+  parent          HierarchyNode? @relation("HierarchyChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  children        HierarchyNode[] @relation("HierarchyChildren")
+  
+  // Detalhes específicos
+  department      Department?
+  province        String?       @db.VarChar(50)
+  municipality    String?       @db.VarChar(100)
+  district        String?       @db.VarChar(100)
+
+  // Informações de contato
+  address         String?       @db.VarChar(500)
+  phone           String?       @db.VarChar(20)
+  email           String?       @db.VarChar(100)
+  
+  // Comandante
+  commanderId     String?
+  commander       User?         @relation("HierarchyCommander", fields: [commanderId], references: [id], onDelete: SetNull)
+  
+  // Dados operacionais
+  operationalHours String?      @db.VarChar(100)
+  jurisdiction    String?       @db.VarChar(500)
+  capacity        Int?          // Capacidade de pessoal
+
+  // Dados adicionais
+  data            Json?
+  isActive        Boolean       @default(true)
+  order           Int           @default(0)
+  level           Int           @default(0)
+  
+  // Membros vinculados (relacionamento direto com usuários)
+  memberships          HierarchyMembership[]
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  createdById     String?
+  createdBy       User?         @relation("HierarchyCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById     String?
+  updatedBy       User?         @relation("HierarchyUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([type])
+  @@index([parentId])
+  @@index([department])
+  @@index([province])
+  @@index([isActive])
+  @@index([commanderId])
+  @@index([code])
+  
+  @@map("hierarchy_nodes")
+}
+
+model HierarchyMembership {
+  id        String @id @default(uuid())
+  nodeId    String
+  userId    String
+  role      String?
+  joinedAt  DateTime @default(now())
+
+  node      HierarchyNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, userId])
+  @@index([userId])
+  @@index([nodeId])
+}
+
+// Artigos/Materiais de Ajuda
+model HelpArticle {
+  id              String        @id @default(uuid())
+  
+  // Identificação
+  title           String        @db.VarChar(200)
+  slug            String        @unique @db.VarChar(200)
+  excerpt         String        @db.VarChar(500)
+  
+  // Categorização
+  category        HelpCategory
+  type            HelpType
+  tags            String[]
+  audience        HelpAudience  @default(TODOS_USUARIOS)
+  
+  // Conteúdo
+  content         String        @db.Text
+  videoUrl        String?       @db.VarChar(500)
+  featuredImage   String?       @db.VarChar(500)
+  
+  // Status e controle
+  status          HelpStatus    @default(RASCUNHO)
+  isFeatured      Boolean       @default(false)
+  isPinned        Boolean       @default(false)
+  order           Int           @default(0)
+  
+  // Metadados
+  readingTime     Int?          // Tempo de leitura em minutos
+  difficulty      Int           @default(1)
+  
+  // Autor
+  authorId        String
+  author          User          @relation("HelpArticleAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Revisão e aprovação
+  reviewerId      String?
+  reviewer        User?         @relation("HelpReviewedBy", fields: [reviewerId], references: [id], onDelete: SetNull)
+  reviewedAt      DateTime?
+  publishedAt     DateTime?
+  
+  // Estatísticas
+  views           Int           @default(0)
+  helpfulVotes    Int           @default(0)
+  notHelpfulVotes Int           @default(0)
+  
+  // Relacionamentos
+  sections        HelpSection[]
+  attachments     HelpAttachment[]
+  searchLogs          HelpSearchLog[]
+  relatedFrom     HelpArticleRelated[] @relation("RelatedFrom")
+  relatedTo       HelpArticleRelated[] @relation("RelatedTo")
+  userInteractions HelpUserInteraction[]
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Índices
+  @@index([category])
+  @@index([type])
+  @@index([status])
+  @@index([authorId])
+  @@index([isFeatured])
+  @@index([isPinned])
+  @@index([audience])
+  @@index([slug])
+  
+  @@map("help_articles")
+}
+
+// Seções de um artigo (para organização)
+model HelpSection {
+  id              String        @id @default(uuid())
+  articleId       String
+  article         HelpArticle   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  title           String        @db.VarChar(200)
+  content         String        @db.Text
+  order           Int           @default(0)
+  icon            String?       @db.VarChar(50)
+  isExpanded      Boolean       @default(true)
+  
+  @@index([articleId, order])
+  @@map("help_sections")
+}
+
+// Anexos de ajuda
+model HelpAttachment {
+  id              String        @id @default(uuid())
+  articleId       String
+  article         HelpArticle   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  name            String        @db.VarChar(200)
+  description     String?       @db.VarChar(500)
+  type            String        @db.VarChar(50) // pdf, doc, image, etc.
+  url             String        @db.VarChar(500)
+  publicId        String        @db.VarChar(500)
+  size            Int?
+  downloads       Int           @default(0)
+  
+  @@index([articleId])
+  @@map("help_attachments")
+}
+
+// Interações dos usuários com os artigos
+model HelpUserInteraction {
+  id              String        @id @default(uuid())
+  articleId       String
+  userId          String
+  article         HelpArticle   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Interações
+  hasViewed       Boolean       @default(false)
+  viewedAt        DateTime?
+  wasHelpful      Boolean?      // null = não votou, true = útil, false = não útil
+  votedAt         DateTime?
+  isBookmarked    Boolean       @default(false)
+  bookmarkedAt    DateTime?
+  
+  // Feedback
+  comment         String?       @db.Text
+  rating          Int?
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@unique([articleId, userId])
+  @@index([articleId])
+  @@index([userId])
+  @@index([wasHelpful])
+  @@index([isBookmarked])
+  
+  @@map("help_user_interactions")
+}
+
+// FAQs
+model HelpFAQ {
+  id              String        @id @default(uuid())
+  question        String        @db.VarChar(500)
+  answer          String        @db.Text
+  category        HelpCategory
+  tags            String[]
+  audience        HelpAudience  @default(TODOS_USUARIOS)
+  order           Int           @default(0)
+  isFeatured      Boolean       @default(false)
+  views           Int           @default(0)
+  helpfulVotes    Int           @default(0)
+  notHelpfulVotes Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([category])
+  @@index([isFeatured])
+  @@index([audience])
+  
+  @@map("help_faqs")
+}
+
+// Pesquisa de Ajuda
+model HelpSearchLog {
+  id              String        @id @default(uuid())
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  query           String        @db.VarChar(500)
+  resultsCount    Int
+  clickedResultId String?
+  clickedArticle  HelpArticle?  @relation(fields: [clickedResultId], references: [id], onDelete: SetNull)
+  searchTime      Int?          // tempo de resposta em ms
+  userAgent       String?       @db.Text
+  ipAddress       String?       @db.VarChar(45)
+  createdAt       DateTime      @default(now())
+  
+  @@index([userId])
+  @@index([query])
+  @@index([createdAt])
+  @@index([clickedResultId])
+  
+  @@map("help_search_logs")
+}
+
+model HelpArticleRelated {
+  id              String      @id @default(uuid())
+  articleId       String
+  relatedArticleId String
+  article         HelpArticle @relation("RelatedFrom", fields: [articleId], references: [id], onDelete: Cascade)
+  relatedArticle  HelpArticle @relation("RelatedTo", fields: [relatedArticleId], references: [id], onDelete: Cascade)
+  order           Int         @default(0)
+  
+  @@unique([articleId, relatedArticleId])
+  @@index([articleId])
+  @@index([relatedArticleId])
+  
+  @@map("help_article_related")
+}
+
+// =============================================================================
+// SERVIÇOS AO EFETIVO: prova de vida e atualização de dados
+// =============================================================================
+
+enum ServiceRequestStatus {
+  PENDENTE
+  APROVADO
+  REJEITADO
+  CANCELADO
+}
+
+/// Campanha de prova de vida (ex.: "Prova de vida 2027 — 1.º semestre").
+model LifeProofCampaign {
+  id          String       @id @default(uuid())
+  title       String       @db.VarChar(200)
+  description String?      @db.Text
+  startsAt    DateTime
+  endsAt      DateTime
+  isActive    Boolean      @default(true)
+  /// Vazio = todos os efetivos
+  targetDepartments Department[]
+  targetProvinces   String[]
+  createdById String
+  createdBy   User         @relation(fields: [createdById], references: [id])
+  createdAt   DateTime     @default(now())
+  proofs      LifeProof[]
+
+  @@index([isActive, startsAt, endsAt])
+  @@map("life_proof_campaigns")
+}
+
+/// Submissão de prova de vida: selfie com o código de desafio, localização e data.
+model LifeProof {
+  id            String               @id @default(uuid())
+  userId        String
+  user          User                 @relation("LifeProofUser", fields: [userId], references: [id], onDelete: Cascade)
+  campaignId    String?
+  campaign      LifeProofCampaign?   @relation(fields: [campaignId], references: [id])
+  status        ServiceRequestStatus @default(PENDENTE)
+  /// Código mostrado na app que o efetivo segura/escreve na fotografia
+  challengeCode String               @db.VarChar(10)
+  selfiePublicId String              @db.VarChar(300)
+  selfieFormat   String?             @db.VarChar(20)
+  latitude      Float?
+  longitude     Float?
+  accuracy      Float?
+  devicePlatform String?             @db.VarChar(20)
+  submittedAt   DateTime             @default(now())
+  reviewedById  String?
+  reviewedBy    User?                @relation("LifeProofReviewer", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?
+  reviewNote    String?              @db.VarChar(500)
+
+  @@index([userId, submittedAt])
+  @@index([campaignId, status])
+  @@index([status])
+  @@map("life_proofs")
+}
+
+/// Pedido de atualização de dados pessoais (substitui a ida presencial à secretaria).
+model DataUpdateRequest {
+  id            String               @id @default(uuid())
+  userId        String
+  user          User                 @relation("DataUpdateRequester", fields: [userId], references: [id], onDelete: Cascade)
+  /// { campo: { from, to } }
+  changes       Json
+  justification String?              @db.VarChar(1000)
+  documentPublicId     String?       @db.VarChar(300)
+  documentResourceType String?       @db.VarChar(10)
+  documentFormat       String?       @db.VarChar(20)
+  documentName         String?       @db.VarChar(200)
+  status        ServiceRequestStatus @default(PENDENTE)
+  autoApproved  Boolean              @default(false)
+  reviewedById  String?
+  reviewedBy    User?                @relation("DataUpdateReviewer", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?
+  reviewNote    String?              @db.VarChar(500)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@map("data_update_requests")
+}
+
+
+// =============================================================================
+// 2FA PRÓPRIO: telemóveis de confiança e códigos de recuperação
+// =============================================================================
+
+/// Telemóvel de confiança: guarda apenas a chave PÚBLICA (Ed25519).
+/// A chave privada nunca sai do telemóvel e só é usada após biometria/PIN.
+model TrustedDevice {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String    @db.VarChar(100)
+  platform    String?   @db.VarChar(20)
+  publicKey   String    @db.VarChar(100) /// base64 da chave pública Ed25519 (32 bytes)
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+
+  @@index([userId, revokedAt])
+  @@map("trusted_devices")
+}
+
+/// Código de recuperação de uso único (guardado só o SHA-256).
+model RecoveryCode {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String    @db.VarChar(64)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, usedAt])
+  @@map("recovery_codes")
+}
